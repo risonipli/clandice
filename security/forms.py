@@ -3,20 +3,19 @@
 from django import forms
 from django.contrib.auth.models import User
 
-class RegistrationForm(forms.Form):
+class ProfileForm(forms.Form):
 	"""
-	Класс представляет собой форму регистрации пользователя
+	Класс представляет собой форму для сбора данных о пользователе
 	"""
-
-	# фамилия регистрируемого пользователя
+	# фамилия пользователя
 	last_name = forms.CharField(label="Фамилия:", max_length=30,
 			required=False)
-	# имя регистрируемого пользователя
+	# имя пользователя
 	first_name = forms.CharField(label="Имя:", max_length=30, required=False)
-	# отчество регистрируемого пользователя
-	middle_name = forms.CharField(label = "Отчество:",
-			max_length=30,required=False)
-	# имя регистрируемого пользователя для входа в систему.
+	# отчество пользователя
+	middle_name = forms.CharField(label = "Отчество:", max_length=30,
+			required=False)
+	# имя пользователя для входа в систему.
 	# Это имя будет запрашиваться на форме аутентификации
 	login_name = forms.CharField(label="Имя входа:", max_length=30)
 	# "никнейм" пользователя. Это имя будет использоваться на сайте (будут
@@ -24,14 +23,11 @@ class RegistrationForm(forms.Form):
 	nickname = forms.CharField(label="Никнейм:", max_length=30, required=False)
 	# адрес электронной почты регистрируемого пользователя
 	email = forms.EmailField(label="Адрес электронной почты:")
-	# пароль регистрируемого пользователя
-	password = forms.CharField(label="Пароль:", min_length=6, max_length=25,
-			widget=forms.PasswordInput())
-	# поле для проверки введенного пароля. Под проверкой здесь понимается
-	# проверка на возможность случайной опечатки при вводе пароля
-	password_confirm = forms.CharField(label="Потверждение пароля:",
-			min_length=6, max_length=25, widget=forms.PasswordInput())
-
+	# адрес "домашней странички" пользователя
+	user_page = forms.URLField(label="Домашняя страничка:", required=False)
+	# "аватар" пользователя
+	avatar = forms.ImageField(label="Аватар:", required=False)
+	
 	def clean_login_name(self):
 		"""
 		Проверяет на существование в системе пользователя с таким же именем
@@ -39,16 +35,35 @@ class RegistrationForm(forms.Form):
 		введенное значение, иначе - ошибка с сообщением, что такое имя уже
 		существует
 		"""
-		login_name = self.cleaned_data['login_name']
+		# получаем введенное значение
+		input_login_name = self.cleaned_data['login_name']
+		# если введенное значение совпадает с текущим, то его и возвращаем
+		#if self.login_name == input_login_name:
+			#return login_name
+
+		# ищем, есть ли пользователи с таким (введенным) именем
 		try:
-			User.objects.get(username=login_name)
+			User.objects.get(username=input_login_name)
 			raise forms.ValidationError("Данное имя уже используется.
-					Пожалуйста, замените на другое.")
+					Пожалуйста, замените на другое")
 		except User.DoesNotExist:
 			# если пользователя не нашлось
 			pass
 
-		return login_name
+		return input_login_name
+
+class RegistrationForm(ProfileForm):
+	"""
+	Класс представляет собой форму регистрации пользователя
+	"""
+
+	# пароль регистрируемого пользователя
+	password = forms.CharField(label="Пароль:", min_length=6, max_length=25,
+			widget=forms.PasswordInput())
+	# поле для проверки введенного пароля. Под проверкой здесь понимается
+	# проверка на возможность случайной опечатки при вводе пароля
+	password_confirm = forms.CharField(label="Потверждение пароля:",
+			min_length=6, max_length=25, widget=forms.PasswordInput())
 
 	def clean_password_confirm(self):
 		"""
