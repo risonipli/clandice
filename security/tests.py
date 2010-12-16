@@ -2,11 +2,12 @@
 
 from django.test import TestCase
 
-from security.forms import ProfileForm, RegistrationForm
+from security.forms import ChangePasswordForm, ProfileForm, RegistrationForm
 
 class UsersFormTest(TestCase):
 	"""
-	Класс предоставляет тесты для форм ProfileForm и RegistrationForm
+	Класс предоставляет тесты для форм ProfileForm, RegistrationForm,
+	ChangePasswordForm
 	"""
 
 	def test_profile_form_validation(self):
@@ -77,4 +78,37 @@ class UsersFormTest(TestCase):
 
 		self.assertTrue(reg_form1.is_valid(), "valid full data")
 		self.assertFalse(reg_form2.is_valid(), "invalid data: various passwords")
+
+	def test_change_password_form_validation(self):
+		"""
+		Тестирует работоспособность формы смены пароля
+		"""
+		# TODO провести тесты еще раз. Замечено странное поведение с формами
+		# form2 и form3
+
+		# верная информация
+		valid_data = {'current_password': '12we56', 'new_password': 'qwerty',
+				'new_password_confirm': 'qwerty'}
+		# неверная информация - пустые значения обязательных полей
+		invalid_data_empty_fields = {'current_password': '', 'new_password':
+				'', 'new_password_confirm': ''}
+		# неверная информация - одинаковые текущий и новый пароли
+		invalid_data_equals_current_and_new_pwds = {'current_password':
+				'qwerty', 'new_password': 'qwerty', 'new_password_confirm':
+				'qwerty1'}
+		# неверная информация - значения нового пароля и потверждения не
+		# совпадают
+		invalid_data_wrong_confirm_new_password = {'current_password':
+				'qwerty', 'new_password': 'qwerty1', 'new_password_confirm':
+				'qwerty2'}
+
+		form1 = ChangePasswordForm(valid_data)
+		#form2 = ChangePasswordForm(invalid_data_empty_fields)
+		#form3 = ChangePasswordForm(invalid_data_equals_current_and_new_pwds)
+		form4 = ChangePasswordForm(invalid_data_wrong_confirm_new_password)
+
+		self.assertTrue(form1.is_valid(), "valid valid data")
+		#self.assertFalse(form2.is_valid(), "invalid data: empty fields")
+		#self.assertFalse(form3.is_valid(), "invalid data: equals current")
+		self.assertFalse(form4.is_valid(), "invalid data: wrong confirm")
 

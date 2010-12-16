@@ -76,3 +76,41 @@ class RegistrationForm(ProfileForm):
 
 		return pwd
 
+class ChangePasswordForm(forms.Form):
+	"""
+	Класс представляет собой форму для смены текущего пароля на новый
+	"""
+
+	# текущий пароль пользователя
+	current_password = forms.CharField(label="Текущий пароль:", min_length=6,
+			max_length=25, widget=forms.PasswordInput())
+	# новый пароль пользователя
+	new_password = forms.CharField(label="Новый пароль:", min_length=6,
+			max_length=25, widget=forms.PasswordInput())
+	# проверка на возможность случайной опечатки при вводе нового пароля
+	new_password_confirm = forms.CharField(label="Потверждение нового пароля:",
+			min_length=6, max_length=25, widget=forms.PasswordInput())
+
+	def clean_new_password(self):
+		"""
+		Проверяет новый пароль на "непохожесть" на текущий. Если новый пароль
+		идентичен текущему выбрасывается исключение
+		"""
+		pwd = self.cleaned_data['new_password']
+		if self.cleaned_data['current_password'] == pwd:
+			raise forms.ValidationError("Новый пароль идентичен текущему.
+					Проверьте корректность ввода")
+
+		return pwd
+
+	def clean_new_password_confirm(self):
+		"""
+		Проверяет новый пароль на возможность случайной опечатки при вводе
+		"""
+		pwd = self.cleaned_data['new_password_confirm']
+		if self.cleaned_data['new_password'] != pwd:
+			raise forms.ValidationError("Пароль и потверждение пароля не
+					совпадают!")
+
+		return pwd
+
