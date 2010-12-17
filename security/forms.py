@@ -44,7 +44,7 @@ class ProfileForm(forms.Form):
 		# ищем, есть ли пользователи с таким (введенным) именем
 		try:
 			User.objects.get(username=input_login_name)
-			raise forms.ValidationError("Данное имя уже используется.
+			raise forms.ValidationError("Данное имя уже используется.\
 					Пожалуйста, замените на другое")
 		except User.DoesNotExist:
 			# если пользователя не нашлось
@@ -71,7 +71,7 @@ class RegistrationForm(ProfileForm):
 		"""
 		pwd = self.cleaned_data['password_confirm']
 		if self.cleaned_data['password'] != pwd:
-			raise forms.ValidationError("Пароль и потверждение пароля не
+			raise forms.ValidationError("Пароль и потверждение пароля не\
 					совпадают!")
 
 		return pwd
@@ -98,7 +98,7 @@ class ChangePasswordForm(forms.Form):
 		"""
 		pwd = self.cleaned_data['new_password']
 		if self.cleaned_data['current_password'] == pwd:
-			raise forms.ValidationError("Новый пароль идентичен текущему.
+			raise forms.ValidationError("Новый пароль идентичен текущему.\
 					Проверьте корректность ввода")
 
 		return pwd
@@ -109,7 +109,7 @@ class ChangePasswordForm(forms.Form):
 		"""
 		pwd = self.cleaned_data['new_password_confirm']
 		if self.cleaned_data['new_password'] != pwd:
-			raise forms.ValidationError("Пароль и потверждение пароля не
+			raise forms.ValidationError("Пароль и потверждение пароля не\
 					совпадают!")
 
 		return pwd
