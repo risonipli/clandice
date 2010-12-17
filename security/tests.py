@@ -1,8 +1,32 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 
-from security.forms import ChangePasswordForm, ProfileForm, RegistrationForm
+from security.profile.forms import ChangePasswordForm, ProfileForm
+from security.registration.forms import RegistrationForm
+
+class UserTest(TestCase):
+
+	def test_user_creation(self):
+		"""
+		Тестирует создание пользователей и дополнительной информации о
+		пользователях
+		"""
+		user1 = User.objects.create_user("user1", "user1@mail.com", "user1pwd")
+		user1.last_name = "User1_LN"
+		user1.first_name = "User1_FN"
+		user1.save()
+
+		user2 = User.objects.create_user("user2", "user2@mail.com", "user2pwd")
+		user2.last_name = "User2_LN"
+		user2.first_name = "User2_FN"
+		user2.save()
+
+		print user1
+		print user2
+		print user1.get_profile()
+		print user2.get_profile()
 
 class UsersFormTest(TestCase):
 	"""
@@ -43,19 +67,19 @@ class UsersFormTest(TestCase):
 				'petro88@mail.com', 'password': 'qwerty', 'password_confirm':
 				'qwеrty'}
 
-		reg_form1 = ProfileForm(valid_full_data)
-		reg_form2 = ProfileForm(valid_base_data)
-		reg_form3 = ProfileForm(invalid_data_blank_login_name)
-		reg_form4 = ProfileForm(invalid_data_blank_email)
-		reg_form5 = ProfileForm(invalid_data_invalid_email)
-		reg_form6 = ProfileForm(invalid_data_invalid_userpage)
+		form1 = ProfileForm(valid_full_data)
+		form2 = ProfileForm(valid_base_data)
+		form3 = ProfileForm(invalid_data_blank_login_name)
+		form4 = ProfileForm(invalid_data_blank_email)
+		form5 = ProfileForm(invalid_data_invalid_email)
+		form6 = ProfileForm(invalid_data_invalid_userpage)
 
-		self.assertTrue(reg_form1.is_valid(), "valid full data")
-		self.assertTrue(reg_form2.is_valid(), "valid base data")
-		self.assertFalse(reg_form3.is_valid(), "invalid data: blank login_name")
-		self.assertFalse(reg_form4.is_valid(), "invalid data: blank email")
-		self.assertFalse(reg_form5.is_valid(), "invalid_data: invalid email")
-		self.assertFalse(reg_form6.is_valid(), "invalid data: invalid userpage")
+		self.assertTrue(form1.is_valid(), "valid full data")
+		self.assertTrue(form2.is_valid(), "valid base data")
+		self.assertFalse(form3.is_valid(), "invalid data: blank login_name")
+		self.assertFalse(form4.is_valid(), "invalid data: blank email")
+		self.assertFalse(form5.is_valid(), "invalid_data: invalid email")
+		self.assertFalse(form6.is_valid(), "invalid data: invalid userpage")
 
 	def test_registration_form_validation(self):
 		"""
@@ -73,11 +97,11 @@ class UsersFormTest(TestCase):
 				'petro88@mail.com', 'password': 'qwerty', 'password_confirm':
 				'qwеrty'}
 
-		reg_form1 = RegistrationForm(valid_full_data)
-		reg_form2 = RegistrationForm(invalid_data_various_pwds)
+		form1 = RegistrationForm(valid_full_data)
+		form2 = RegistrationForm(invalid_data_various_pwds)
 
-		self.assertTrue(reg_form1.is_valid(), "valid full data")
-		self.assertFalse(reg_form2.is_valid(), "invalid data: various passwords")
+		self.assertTrue(form1.is_valid(), "valid full data")
+		self.assertFalse(form2.is_valid(), "invalid data: various passwords")
 
 	def test_change_password_form_validation(self):
 		"""
