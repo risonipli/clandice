@@ -34,8 +34,8 @@ class PostTest(TestCase):
 		self.assertNotEquals(node0, None)
 
 		# третий пользователь создал пост
-		node1 = node0.add_sibling(title="node1 title", message="node1
-		message", created_by=user3)
+		node1 = node0.add_sibling(title="node1 title", message="node1 message",
+				created_by=user3)
 		# первый пользователь прочитал пост
 		node1.who_read.add(user1)
 		self.assertNotEquals(node1, None)

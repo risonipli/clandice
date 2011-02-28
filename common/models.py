@@ -24,7 +24,8 @@ class AbstractMessage(models.Model):
 	# пользователь, который удалил сообщение. Ссылка на объект класса
 	# django.contrib.auth.models.User
 	deleted_by = models.ForeignKey(User,
-			related_name="commons_abstractmessages_deleted_message")
+			related_name="commons_abstractmessages_deleted_message",
+			blank=True, null=True)
 	# время удаления сообщения
 	deleted_on = models.DateTimeField("Время удаления", auto_now=True)
 	# ip-адрес пользователя, который создал сообщение
