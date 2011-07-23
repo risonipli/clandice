@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			Clandice:&nbsp;{% block title %}{% endblock %}
+		</title>
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" />
+	</head>
+	<body>
+		<header></header>
+		<div id="content">
+			{% block content %}{% endblock %}
+		</div>
+		<div id="sideMenu">
+			{% block side_menu %}{% endblock %}
+		</div>
+		<footer></footer>
+	</body>
+</html>
+
