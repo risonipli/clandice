@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Просмотр профиля{% endblock %}
+{% block content %}
+	<table>
+		<tr>
+			<th>Аватар:</th>
+			<td colspan="3"><img src="{{ MEDIA_URL }}avatars/{{ person.id }}.jpg"
+				alt="{{ person.get_profile.nickname|default_if_none:'' }}"/></td>
+		</tr>
+		<tr>
+			<th>Ф.И.О.</th>
+			<td>{{ person.last_name }}</td>
+			<td>{{ person.first_name }}</td>
+			<td>{{ person.get_profile.middle_name|default_if_none:"" }}</td>
+		</tr>
+		<tr>
+			<th>Имя входа:</th>
+			<td colspan="3">{{ person.username }}</td>
+		</tr>
+		<tr>
+			<th>Никнейм:</th>
+			<td colspan="3">{{ person.get_profile.nickname|default_if_none:"" }}</td>
+		</tr>
+		<tr>
+			<th>Адрес электронной почты:</th>
+			<td colspan="3">{{ person.email }}</td>
+		</tr>
+		<tr>
+			<th>Сайт</th>
+			<td colspan="3">{{ person.get_profile.user_page|default_if_none:"" }}</td>
+		</th>
+	</table>
+{% endblock %}
+

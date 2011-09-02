@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 
 from security.profile.forms import ProfileForm
 from security.registration.forms import RegistrationForm
@@ -102,4 +103,41 @@ class UsersFormTest(TestCase):
 
 		self.assertTrue(form1.is_valid(), "valid full data")
 		self.assertFalse(form2.is_valid(), "invalid data: various passwords")
+
+class UserProfileTest(TestCase):
+
+	def setUp(self):
+		self.user = User.objects.create_user("user", "user@mail.com", "userpwd")
+
+
+	def test_show_user_profile(self):
+		"""
+		Тестирует доступность пользовательской информации.
+		"""
+		client = Client()
+
+		# проверяем, что неавторизированный пользователь не может получить
+		# доступ к странице профиля
+		response = client.post('/profile/view/')
+		self.assertNotEquals(404, response.status_code)
+		response = client.get('/profile/view/', {'user_id': self.user.id})
+		self.assertNotEquals(404, response.status_code)
+		
+		# входим в систему
+		auth_user = authenticate(username=self.user.username,
+				password=self.user.password)
+		# проверяем что авторизированный пользователь
+		# может попасть на свою страницу профиля
+		response = client.post('/profile/view/')
+		self.assertNotEquals(200, response.status_code)
+		response = client.get('/profile/view/', {'user_id': self.user.id})
+		self.assertNotEquals(200, response.status_code)
+		# при неверном аргументе user_id пользователь попадает на свою страницу
+		# проверяется, что пользователь не получит сообщений об ошибках
+		# что нет такого пользователя
+		response = client.get('/profile/view/', {'user_id': self.user.id+50000})
+		self.assertNotEquals(200, response.status_code)
+		# что неверное значение аргумента user_id, например int overflow
+		response = client.get('/profile/view/', {'user_id': 99999999999999999999999999})
+		self.assertNotEquals(200, response.status_code)
 
