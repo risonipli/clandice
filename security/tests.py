@@ -31,49 +31,46 @@ class UserTest(TestCase):
 
 class UsersFormTest(TestCase):
 	"""
-	Класс предоставляет тесты для форм ProfileForm, RegistrationForm,
-	ChangePasswordForm
+	Класс предоставляет тесты для форм ProfileForm, RegistrationForm
 	"""
+
+	def setUp(self):
+		self.user = User.objects.create_user("user", "user@clandice.ru", "userpwd")
 
 	def test_profile_form_validation(self):
 		"""
 		Тестирует работоспособность формы редактирование профиля пользователя
 		"""
 		# полная верная информация
-		valid_full_data = {'last_name': 'Петров', 'first_name': 'Петр', 'middle_name':
-				'Петрович', 'login_name': 'petr88', 'nickname': 'petroman',
-				'email': 'petro88@mail.com', 'user_page': 'http://user.page.com'}
+		valid_full_data = {'last_name': 'Петров', 'first_name': 'Петр',
+				'middle_name': 'Петрович', 'login_name': self.user.username,
+				'nickname': 'usernick', 'email': self.user.email,
+				'user_page': 'http://user.page.com'}
 
 		# основная верная информация
-		valid_base_data = {'login_name': 'petr88', 'email': 'petro88@mail.com'}
+		valid_base_data = {'login_name': self.user.username, 'email': self.user.email}
 
 		# неверная информация - отсутствует обязательное значени имени входа
-		invalid_data_blank_login_name = {'email': 'petro88@mail.com'}
+		invalid_data_blank_login_name = {'email': self.user.email}
 
 		# неверная информация - отсутствует обязательное значение адреса
 		# электронной почты
-		invalid_data_blank_email = {'login_name': 'petr88'}
+		invalid_data_blank_email = {'login_name': self.user.username}
 
 		# неверная информация - неверный формат записи адреса электронной почты
-		invalid_data_invalid_email = {'login_name': 'petr88', 'email':
-				'petro88.mail.com'}
+		invalid_data_invalid_email = {'login_name': self.user.username,
+				'email': 'user.clandice.ru'}
 
 		# неверная информация - неверный формат записи адреса домашней странички
-		invalid_data_invalid_userpage = {'login_name': 'petr88', 'email':
-				'petro88@mail.com', 'user_page': 'hddp:index.html'}
+		invalid_data_invalid_userpage = {'login_name': self.user.username,
+				'email': self.user.username, 'user_page': 'hddp:index.html'}
 
-		# неверная информация - значение потверждения пароля содержит опечатку
-		# (вместо латинской 'e' введено русская 'е')
-		invalid_data_various_pwds = {'login_name': 'petr88', 'email':
-				'petro88@mail.com', 'password': 'qwerty', 'password_confirm':
-				'qwеrty'}
-
-		form1 = ProfileForm(valid_full_data)
-		form2 = ProfileForm(valid_base_data)
-		form3 = ProfileForm(invalid_data_blank_login_name)
-		form4 = ProfileForm(invalid_data_blank_email)
-		form5 = ProfileForm(invalid_data_invalid_email)
-		form6 = ProfileForm(invalid_data_invalid_userpage)
+		form1 = ProfileForm(data=valid_full_data, user=self.user)
+		form2 = ProfileForm(data=valid_base_data, user=self.user)
+		form3 = ProfileForm(data=invalid_data_blank_login_name, user=self.user)
+		form4 = ProfileForm(data=invalid_data_blank_email, user=self.user)
+		form5 = ProfileForm(data=invalid_data_invalid_email, user=self.user)
+		form6 = ProfileForm(data=invalid_data_invalid_userpage, user=self.user)
 
 		self.assertTrue(form1.is_valid(), "valid full data")
 		self.assertTrue(form2.is_valid(), "valid base data")
@@ -87,16 +84,15 @@ class UsersFormTest(TestCase):
 		Тестирует работоспособность формы регистрации пользователя
 		"""
 		# полная верная информация
-		valid_full_data = {'last_name': 'Петров', 'first_name': 'Петр', 'middle_name':
-				'Петрович', 'login_name': 'petr88', 'nickname': 'petroman',
-				'email': 'petro88@mail.com', 'user_page': 'http://user.page.com',
-				'password': 'qwerty', 'password_confirm': 'qwerty'}
+		valid_full_data = {'login_name': 'user1',
+				'email': 'user1@clandice.ru', 'password': 'userpwd',
+				'password_confirm': 'userpwd'}
 
 		# неверная информация - значение потверждения пароля содержит опечатку
 		# (вместо латинской 'e' введено русская 'е')
-		invalid_data_various_pwds = {'login_name': 'petr88', 'email':
-				'petro88@mail.com', 'password': 'qwerty', 'password_confirm':
-				'qwеrty'}
+		invalid_data_various_pwds = {'login_name': self.user.username,
+				'email': self.user.email, 'password': self.user.password,
+				'password_confirm': 'usеrpwd'}
 
 		form1 = RegistrationForm(valid_full_data)
 		form2 = RegistrationForm(invalid_data_various_pwds)

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
-from security.profile.forms import ProfileForm
 
-class RegistrationForm(ProfileForm):
+class RegistrationForm(forms.Form):
 	"""
 	Класс представляет собой форму регистрации пользователя
 	"""
@@ -14,9 +13,6 @@ class RegistrationForm(ProfileForm):
 	# пользователем уведомлений и восстановления пароля, уникален в системе,
 	# не предоставлять возможность смены
 	email = forms.EmailField(label='E-mail')
-	# псевдоним пользователя, используется для именования пользователя на сайте,
-	# предоставить возможность изменения, уникален в системе
-	nickname = forms.CharField(label='Никнейм', max_length=20)
 	# пароль регистрируемого пользователя
 	password = forms.CharField(label="Пароль:", min_length=6, max_length=25,
 			widget=forms.PasswordInput())
@@ -30,11 +26,12 @@ class RegistrationForm(ProfileForm):
 		проверяет совпадают ли задаваемый пользователем пароль, и его подтверждение,
 		в случае когда пароли не совпадают, возвращает сообщение о ошибке
 		"""
-		pwd = self.cleaned_data['password_confirm']
-		if self.cleaned_data['password'] != pwd:
+		password = self.cleaned_data.get("password", "")
+		password_confirm = self.cleaned_data['password_confirm']
+		if password != password_confirm:
 			raise forms.ValidationError("Пароль и потверждение пароля не\
 					совпадают!")
-		return pwd
+		return password_confirm
 
 	def clean_login_name(self):
 		"""

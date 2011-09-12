@@ -28,6 +28,10 @@ class ProfileForm(forms.Form):
 	# "аватар" пользователя
 	avatar = forms.ImageField(label="Аватар:", required=False)
 
+	def __init__(self, user, *args, **kwargs):
+		self.user = user
+		super(ProfileForm, self).__init__(*args, **kwargs)
+
 	def clean_login_name(self):
 		"""
 		Проверяет на существование в системе пользователя с таким же именем
@@ -38,8 +42,8 @@ class ProfileForm(forms.Form):
 		# получаем введенное значение
 		input_login_name = self.cleaned_data['login_name']
 		# если введенное значение совпадает с текущим, то его и возвращаем
-		#if self.login_name == input_login_name:
-			#return login_name
+		if self.user.username == input_login_name:
+			return input_login_name
 
 		# ищем, есть ли пользователи с таким (введенным) именем
 		try:
