@@ -4,7 +4,12 @@
 	<table>
 		<tr>
 			<th>Аватар:</th>
-			<td colspan="3"><img src="{{ MEDIA_URL }}avatars/{{ person.id }}.jpg"
+			<td colspan="3">
+				{% if person.get_profile.has_avatar %}
+					<img src="{{ MEDIA_URL }}avatars/{{ person.id }}"
+				{% else %}
+					<img src="{{ MEDIA_URL }}avatars/noimage.jpg"
+				{% endif %}
 				alt="{{ person.get_profile.nickname|default_if_none:'' }}"/></td>
 		</tr>
 		<tr>
@@ -30,5 +35,10 @@
 			<td colspan="3">{{ person.get_profile.user_page|default_if_none:"" }}</td>
 		</th>
 	</table>
+{% endblock %}
+{% block side_menu %}
+	{% ifequal user.id person.id %}
+		<a href="/profile/edit/">Редактировать профиль</a>
+	{% endifequal %}
 {% endblock %}
 

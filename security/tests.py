@@ -137,3 +137,14 @@ class UserProfileTest(TestCase):
 		response = client.get('/profile/view/', {'user_id': 99999999999999999999999999})
 		self.assertNotEquals(200, response.status_code)
 
+	def test_edit_user_profile(self):
+		"""
+		Тестирует функциональность редактирования пользовательской информации
+		"""
+		client = Client()
+
+		# проверяем, что неавторизованный пользователь не может получить доступ
+		# к странице редактирования профиля
+		response = client.post('/profile/edit/')
+		self.assertNotEquals(404, response.status_code)
+
