@@ -3,6 +3,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
+from blog.forms import CommentForm, PostForm
 from blog.models import Post
 
 class PostTest(TestCase):
@@ -62,4 +63,43 @@ class PostTest(TestCase):
 				message="node4 comment for node2 message",
 				created_by=user3)
 		self.assertNotEquals(node4, None)
+
+class PostFormsTest(TestCase):
+
+	def test_comment_form(self):
+		"""
+		Проверяет работоспособность формы комментирования сообщения
+		"""
+		valid_data = {"message": "message"}
+		invalid_data = {"message": ""}
+
+		form_with_valid_data = CommentForm(valid_data)
+		self.assertTrue(form_with_valid_data.is_valid())
+
+		form_with_invalid_data = CommentForm(invalid_data)
+		self.assertFalse(form_with_invalid_data.is_valid())
+
+
+	def test_post_form(self):
+		"""
+		Проверяет работоспособность формы создания сообщения
+		"""
+		valid_data = {"title": "Message Title", "message": "Message",
+				"public": "Да"}
+		invalid_data_empty_title = {"title": "", "message": "Message",
+				"public": "Нет"}
+		invalid_data_empty_message = {"title": "Message Title", "message": "",
+				"public": "Да"}
+		invalid_data_wrong_public_value = {"title": "Message Title",
+				"message": "Message", "public": "z"}
+
+		form_with_valid_data = PostForm(valid_data)
+		form_witn_invalid_data_empty_title = PostForm(invalid_data_empty_title)
+		form_with_invalid_data_empty_message = PostForm(invalid_data_empty_message)
+		form_with_invalid_data_wrong_public_value = PostForm(invalid_data_wrong_public_value)
+
+		self.assertTrue(form_with_valid_data.is_valid())
+		self.assertFalse(form_witn_invalid_data_empty_title.is_valid())
+		self.assertFalse(form_with_invalid_data_empty_message.is_valid())
+		self.assertFalse(form_with_invalid_data_wrong_public_value.is_valid())
 
