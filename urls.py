@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
+from blog.views import AddPostView
 from security.profile.views import ProfileDisplayView, ProfileEditView
 
 urlpatterns = patterns('',
@@ -22,6 +23,8 @@ urlpatterns = patterns('',
 		login_required(ProfileDisplayView.as_view())),
 
 	url(r'^profile/edit/$', login_required(ProfileEditView.as_view())),
+
+	url(r'^post/add/$', login_required(AddPostView.as_view())),
 
 	(r'^media/(?P<path>.*)$', 'django.views.static.serve',
 		{'document_root': settings.MEDIA_ROOT}),

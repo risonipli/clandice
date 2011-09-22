@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 
 from blog.forms import CommentForm, PostForm
 from blog.models import Post
@@ -85,11 +86,11 @@ class PostFormsTest(TestCase):
 		Проверяет работоспособность формы создания сообщения
 		"""
 		valid_data = {"title": "Message Title", "message": "Message",
-				"public": "Да"}
+				"public": "y"}
 		invalid_data_empty_title = {"title": "", "message": "Message",
-				"public": "Нет"}
+				"public": "n"}
 		invalid_data_empty_message = {"title": "Message Title", "message": "",
-				"public": "Да"}
+				"public": "y"}
 		invalid_data_wrong_public_value = {"title": "Message Title",
 				"message": "Message", "public": "z"}
 
@@ -102,4 +103,19 @@ class PostFormsTest(TestCase):
 		self.assertFalse(form_witn_invalid_data_empty_title.is_valid())
 		self.assertFalse(form_with_invalid_data_empty_message.is_valid())
 		self.assertFalse(form_with_invalid_data_wrong_public_value.is_valid())
+
+class PostViewTest(TestCase):
+
+	def test_add_post(self):
+		"""
+		Проверяет работоспособность добавления поста
+		"""
+		client = Client()
+
+		response = client.post('/post/add/')
+		self.assertNotEquals(404, response.status_code)
+
+		authenticate(username="", password="")
+		response = client.post('/post/add/')
+		self.assertNotEquals(200, response.status_code)
 
